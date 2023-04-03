@@ -2,7 +2,7 @@
 
 rules:
   - id: print-debug-statements
-    pattern: "['\"](api|key|secret)['\"]\s*:\s*['\"][^'\"]+['\"]"
+    pattern: ""
     message: "Potential hardcoded secret or API key found."
     languages: [python]
     severity: HIGH
