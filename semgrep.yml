@@ -2,7 +2,7 @@
 
 rules:
   - id: print-debug-statements
-    pattern: print($*)
+    pattern: print(.*)
     message: "Remove print statements before committing code."
     languages: [python]
     severity: ERROR
