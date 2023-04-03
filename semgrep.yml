@@ -2,7 +2,8 @@
 
 rules:
   - id: print-debug-statements
-    pattern: ""
-    message: "Potential hardcoded secret or API key found."
+    pattern: |
+      hashlib.new(["md5", "sha1", "sha224", "sha256", "sha384", "sha512"])
+    message: "Insecure hashing algorithm used."
     languages: [python]
     severity: ERROR
