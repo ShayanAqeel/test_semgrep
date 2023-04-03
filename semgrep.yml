@@ -1,0 +1,22 @@
+rules:
+  # Rule to detect hardcoded AWS access key IDs
+  - id: aws-secret-key
+    patterns:
+      - pattern: "AKIA[0-9A-Z]{16}"
+    message: "Hardcoded AWS access key ID detected."
+    languages:
+      - python
+      - java
+      - ruby
+      - go
+
+  # Rule to detect hardcoded API keys
+  - id: api-key
+    patterns:
+      - pattern: "API_KEY=[a-zA-Z0-9]+"
+    message: "Hardcoded API key detected."
+    languages:
+      - python
+      - ruby
+      - go
+
