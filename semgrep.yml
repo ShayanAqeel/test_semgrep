@@ -5,4 +5,4 @@ rules:
     pattern: ""
     message: "Potential hardcoded secret or API key found."
     languages: [python]
-    severity: HIGH
+    severity: ERROR
