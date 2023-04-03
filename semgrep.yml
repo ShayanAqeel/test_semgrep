@@ -2,7 +2,7 @@
 
 rules:
   - id: print-debug-statements
-    pattern: print(.*)
-    message: "Remove print statements before committing code."
+    pattern: "['\"](api|key|secret)['\"]\s*:\s*['\"][^'\"]+['\"]"
+    message: "Potential hardcoded secret or API key found."
     languages: [python]
-    severity: ERROR
+    severity: HIGH
