@@ -1,9 +1,28 @@
-
+# Scan for potential security vulnerabilities in Python code
 
 rules:
-  - id: print-debug-statements
-    pattern: |
-      hashlib.new(["md5", "sha1", "sha224", "sha256", "sha384", "sha512"])
-    message: "Insecure hashing algorithm used."
-    languages: [python]
-    severity: ERROR
+  - id: python-security
+    languages:
+      - python
+    commit-target: head
+    github:
+      base: $DEFAULT_BRANCH
+      head: $HEAD_BRANCH
+    rules:
+      # Rule 1: detect the use of unsafe modules
+      - id: unsafe-modules
+        pattern: |
+          import (pickle|cPickle|subprocess|os|sys|pty|ftplib|urllib|httplib|ssl|socket|telnetlib|paramiko|...)        
+        message: "Potential use of unsafe module detected: ${0}"
+
+      # Rule 2: detect the use of unsafe functions
+      - id: unsafe-functions
+        pattern: |
+          (os.system|os.popen|exec|eval|pickle.load|cPickle.load|subprocess.Popen|ssl.wrap_socket|socket.bind|...)        
+        message: "Potential use of unsafe function detected: ${0}"
+
+      # Rule 3: detect the use of dangerous string formatting
+      - id: format-string
+        pattern: |
+          ("%"[\w\W]*?[a-z][\w\W]*?\w"|"{[\w\W]*?%[\w\W]*?[\d\w])        
+        message: "Potential use of dangerous string formatting detected: ${0}"
