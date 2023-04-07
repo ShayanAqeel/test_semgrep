@@ -1,48 +1,28 @@
-import requests
-import json
-import base64
-from cryptography.hazmat.primitives.asymmetric import padding, rsa
-from cryptography.hazmat.primitives import serialization, hashes
-from cryptography.hazmat.primitives.serialization import load_pem_public_key, load_ssh_public_key
+# Scan for potential security vulnerabilities in Python code
 
-from base64 import b64encode
-from nacl import encoding, public
+rules:
+  - id: python-security
+    languages:
+      - python
+    commit-target: head
+    github:
+      base: $DEFAULT_BRANCH
+      head: $HEAD_BRANCH
+    rules:
+      # Rule 1: detect the use of unsafe modules
+      - id: unsafe-modules
+        pattern: |
+          import (pickle|cPickle|subprocess|os|sys|pty|ftplib|urllib|httplib|ssl|socket|telnetlib|paramiko|...)        
+        message: "Potential use of unsafe module detected: ${0}"
 
-def encrypt(public_key: str, secret_value: str) -> str:
-  """Encrypt a Unicode string using the public key."""
-  public_key = public.PublicKey(public_key.encode("utf-8"), encoding.Base64Encoder())
-  sealed_box = public.SealedBox(public_key)
-  encrypted = sealed_box.encrypt(secret_value.encode("utf-8"))
-  return b64encode(encrypted).decode("utf-8")
+      # Rule 2: detect the use of unsafe functions
+      - id: unsafe-functions
+        pattern: |
+          (os.system|os.popen|exec|eval|pickle.load|cPickle.load|subprocess.Popen|ssl.wrap_socket|socket.bind|...)        
+        message: "Potential use of unsafe function detected: ${0}"
 
-github_username = "ShayanAqeel"
-github_repository = "test_semgrep"
-semgrep_token = "1edcdef2c13f1e59b657cadcb09094439e06a182022fbef7389157db5bcc4c0a"
-personal_access_token = "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"
-secret_name = "SEMGREP_TOKEN"
-
-headers = {
-    "Accept": "application/vnd.github.v3+json",
-    "Authorization": f"Bearer {personal_access_token}"
-}
-
-public_key_url = f"https://api.github.com/repos/{github_username}/{github_repository}/actions/secrets/public-key"
-public_key_response = requests.get(public_key_url, headers=headers)
-public_key_pem = public_key_response.json()["key"]
-
-encrypted_value = encrypt(public_key_pem, semgrep_token)
-
-data = {
-    "encrypted_value": encrypted_value,
-    "key_id": public_key_response.json()["key_id"]
-}
-
-secrets_url = f"https://api.github.com/repos/{github_username}/{github_repository}/actions/secrets/{secret_name}"
-response = requests.put(secrets_url, headers=headers, data=json.dumps(data))
-
-if response.ok:
-    print("Secret created successfully!")
-else:
-    print("Failed to create secret")
-    print(response.text)
-
+      # Rule 3: detect the use of dangerous string formatting
+      - id: format-string
+        pattern: |
+          ("%"[\w\W]*?[a-z][\w\W]*?\w"|"{[\w\W]*?%[\w\W]*?[\d\w])        
+        message: "Potential use of dangerous string formatting detected: ${0}"
