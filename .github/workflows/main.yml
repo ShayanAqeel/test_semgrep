@@ -1,4 +1,7 @@
 # Scan for potential security vulnerabilities in Python code
+name: semgrep
+
+on: push
 
 rules:
   - id: python-security
