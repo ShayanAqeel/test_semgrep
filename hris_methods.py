@@ -4,7 +4,6 @@ import json
 import traceback
 import hashlib
 import smtplib
-a
 import base64
 from routes.dec_fun.session_tokens import SessionTokens
 from sendgrid import SendGridAPIClient
