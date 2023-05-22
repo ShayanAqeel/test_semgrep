@@ -1,0 +1,12 @@
+<h4>{{ title }}</h4>
+<ul>
+{% for post in posts %}
+    <li><a href="{% url "blog-post-detail" post.slug %}">Read More</a></li>
+{% endfor %}
+</ul>
+<!-- existing code here -->
+{% row %}
+    {% col %}
+        {% recent_posts post %}
+    {% endcol %}
+{% endrow %}
